@@ -19,6 +19,7 @@
 # include <string.h>
 # include <sys/time.h>
 # include <unistd.h>
+# include <limits.h>
 
 typedef enum e_sched
 {
@@ -76,31 +77,43 @@ typedef struct s_coder
 
 typedef struct s_engine
 {
-	t_config		config;
-	t_coder			*coders;
-	t_dongle		*dongles;
-	pthread_mutex_t	log_mutex;
-	pthread_mutex_t	state_mutex;
-	int				simulation_stop;
-	long long		start_time;
-	pthread_t		monitor_thread;
+	t_config			config;
+	t_coder				*coders;
+	t_dongle			*dongles;
+	pthread_mutex_t		log_mutex;
+	pthread_mutex_t		state_mutex;
+	int					simulation_stop;
+	long long			start_time;
+	unsigned long long	next_sequence;
+	pthread_t			monitor_thread;
 }	t_engine;
 
 /* --- Parsing & Utils --- */
 int			parse_args(int argc, char **argv, t_config *config);
+int			parse_numeric_args(char **argv, t_config *config);
+int			parse_positive_ll(const char *str, long long *value);
+int			parse_positive_int(const char *str, int *value);
+int			validate_numeric_values(t_config *config);
+int			parse_scheduler(const char *str, t_sched *scheduler);
+void		print_parser_error(void);
 long long	get_time_ms(void);
 void		log_state(t_coder *coder, const char *state);
 
-/* --- Engine Init & Cleanup --- */
-int			init_engine(t_engine *engine, t_config config);
-void		cleanup_engine(t_engine *engine);
+/* Initialization */
+int		init_engine(t_engine *engine, t_config config);
+int		init_dongles(t_engine *engine);
+void	init_coders(t_engine *engine);
 
-/* --- Heap (Priority Queue) --- */
-t_heap		*heap_create(int capacity);
-void		heap_push(t_heap *heap, t_request req, t_sched sched);
-t_request	heap_pop(t_heap *heap, t_sched sched);
-void		heap_destroy(t_heap *heap);
-int			is_higher_priority(t_request a, t_request b, t_sched sched);
-void		swap_req(t_request *a, t_request *b);
+/* Cleanup */
+void	cleanup_engine(t_engine *engine);
+
+/* Heap */
+t_heap	*heap_create(int capacity);
+void	heap_destroy(t_heap *heap);
+int		heap_push(t_heap *heap, t_request request, t_sched sched);
+int		heap_peek(t_heap *heap, t_request *request);
+int		heap_pop(t_heap *heap, t_sched sched, t_request *request);
+int		request_has_priority(t_request a, t_request b, t_sched sched);
+void	swap_requests(t_request *a, t_request *b);
 
 #endif
