@@ -19,6 +19,8 @@ SRCS		:=	main.c \
 				heap/heap_priority.c \
 				heap/heap_push.c \
 				heap/heap_pop.c \
+				simulation/run_simulation.c \
+				simulation/coder_routine.c \
 				utils/utils.c \
 
 OBJS		:= $(SRCS:%.c=$(OBJ_DIR)/%.o)

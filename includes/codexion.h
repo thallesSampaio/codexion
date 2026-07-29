@@ -116,4 +116,8 @@ int		heap_pop(t_heap *heap, t_sched sched, t_request *request);
 int		request_has_priority(t_request a, t_request b, t_sched sched);
 void	swap_requests(t_request *a, t_request *b);
 
+/* Simulation */
+int		run_simulation(t_engine *engine);
+void	*coder_routine(void *arg);
+
 #endif

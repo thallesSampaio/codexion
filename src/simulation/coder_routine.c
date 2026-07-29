@@ -1,31 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   coder_routine.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: thasampa <thasampa@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/07/24 16:42:11 by thasampa          #+#    #+#             */
-/*   Updated: 2026/07/24 16:42:14 by thasampa         ###   ########.fr       */
+/*   Created: 2026/07/29 17:22:10 by thasampa          #+#    #+#             */
+/*   Updated: 2026/07/29 17:22:33 by thasampa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-int	main(int argc, char **argv)
+void	*coder_routine(void *arg)
 {
-	t_config	config;
-	t_engine	engine;
+	t_coder	*coder;
 
-	if (!parse_args(argc, argv, &config))
-		return (1);
-	if (!init_engine(&engine, config))
-		return (1);
-	if (!run_simulation(&engine))
-	{
-		cleanup_engine(&engine);
-		return (1);
-	}
-	cleanup_engine(&engine);
-	return (0);
+	coder = (t_coder *)arg;
+	pthread_mutex_lock(&coder->engine->log_mutex);
+	printf("coder %d thread started\n", coder->id);
+	pthread_mutex_unlock(&coder->engine->log_mutex);
+	return (NULL);
 }
