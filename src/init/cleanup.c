@@ -12,7 +12,7 @@
 
 #include "codexion.h"
 
-static void	destroy_dongles(t_engine *engine)
+void	destroy_all_dongles(t_engine *engine)
 {
 	int	i;
 
@@ -24,8 +24,18 @@ static void	destroy_dongles(t_engine *engine)
 		pthread_mutex_destroy(&engine->dongles[i].mutex);
 		i++;
 	}
-	free(engine->dongles);
-	engine->dongles = NULL;
+}
+
+static void	destroy_all_coders(t_engine *engine)
+{
+	int	i;
+
+	i = 0;
+	while (i < engine->config.num_coders)
+	{
+		pthread_mutex_destroy(&engine->coders[i].state_mutex);
+		i++;
+	}
 }
 
 void	cleanup_engine(t_engine *engine)
@@ -33,11 +43,14 @@ void	cleanup_engine(t_engine *engine)
 	if (!engine)
 		return ;
 	if (engine->dongles)
-		destroy_dongles(engine);
+	{
+		destroy_all_dongles(engine);
+		free(engine->dongles);
+	}
 	if (engine->coders)
 	{
+		destroy_all_coders(engine);
 		free(engine->coders);
-		engine->coders = NULL;
 	}
 	pthread_mutex_destroy(&engine->state_mutex);
 	pthread_mutex_destroy(&engine->log_mutex);

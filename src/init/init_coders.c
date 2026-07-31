@@ -12,20 +12,46 @@
 
 #include "codexion.h"
 
-void	init_coders(t_engine *engine)
+static void	set_coder_data(t_engine *engine, int index)
+{
+	t_coder	*coder;
+
+	coder = &engine->coders[index];
+	coder->id = index + 1;
+	coder->last_compile_start = engine->start_time;
+	coder->compiles_done = 0;
+	coder->engine = engine;
+	coder->left_dongle = &engine->dongles[index];
+	coder->right_dongle = &engine->dongles[(index + 1)
+		% engine->config.num_coders];
+}
+
+void	destroy_coder_mutexes(t_engine *engine, int count)
+{
+	int	i;
+
+	i = 0;
+	while (i < count)
+	{
+		pthread_mutex_destroy(&engine->coders[i].state_mutex);
+		i++;
+	}
+}
+
+int	init_coders(t_engine *engine)
 {
 	int	i;
 
 	i = 0;
 	while (i < engine->config.num_coders)
 	{
-		engine->coders[i].id = i + 1;
-		engine->coders[i].last_compile_start = engine->start_time;
-		engine->coders[i].compiles_done = 0;
-		engine->coders[i].engine = engine;
-		engine->coders[i].left_dongle = &engine->dongles[i];
-		engine->coders[i].right_dongle = &engine->dongles[(i + 1)
-			% engine->config.num_coders];
+		set_coder_data(engine, i);
+		if (pthread_mutex_init(&engine->coders[i].state_mutex, NULL) != 0)
+		{
+			destroy_coder_mutexes(engine, i);
+			return (0);
+		}
 		i++;
 	}
+	return (1);
 }

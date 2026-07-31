@@ -69,6 +69,11 @@ int	init_engine(t_engine *engine, t_config config)
 	}
 	if (!init_dongles(engine))
 		return (clean_engine_init(engine), 0);
-	init_coders(engine);
+	if (!init_coders(engine))
+	{
+		destroy_all_dongles(engine);
+		clean_engine_init(engine);
+		return (0);
+	}
 	return (1);
 }
