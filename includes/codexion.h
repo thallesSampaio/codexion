@@ -128,5 +128,8 @@ int			stop_simulation(t_engine *engine);
 void		wake_all_coders(t_engine *engine);
 void		*monitor_routine(void *arg);
 void		reset_simulation_time(t_engine *engine);
+void		coder_start_compile(t_coder *coder);
+long long	coder_get_deadline(t_coder *coder);
+int			coder_get_compiles(t_coder *coder);
 
 #endif
