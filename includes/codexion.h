@@ -72,6 +72,7 @@ typedef struct s_coder
 	t_dongle		*right_dongle;
 	long long		last_compile_start;
 	int				compiles_done;
+	pthread_mutex_t	state_mutex;
 	struct s_engine	*engine;
 }	t_coder;
 
@@ -98,14 +99,17 @@ int			parse_scheduler(const char *str, t_sched *scheduler);
 void		print_parser_error(void);
 long long	get_time_ms(void);
 void		log_state(t_coder *coder, const char *state);
+void		log_burnout(t_coder *coder);
 
 /* Initialization */
 int			init_engine(t_engine *engine, t_config config);
 int			init_dongles(t_engine *engine);
-void		init_coders(t_engine *engine);
+int			init_coders(t_engine *engine);
+void		destroy_coder_mutexes(t_engine *engine, int count);
 
 /* Cleanup */
 void		cleanup_engine(t_engine *engine);
+void		destroy_all_dongles(t_engine *engine);
 
 /* Heap */
 void		heap_destroy(t_heap *heap);
@@ -119,5 +123,10 @@ t_heap		*heap_create(int capacity);
 /* Simulation */
 int			run_simulation(t_engine *engine);
 void		*coder_routine(void *arg);
+int			simulation_should_stop(t_engine *engine);
+int			stop_simulation(t_engine *engine);
+void		wake_all_coders(t_engine *engine);
+void		*monitor_routine(void *arg);
+void		reset_simulation_time(t_engine *engine);
 
 #endif

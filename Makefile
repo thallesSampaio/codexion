@@ -21,7 +21,11 @@ SRCS		:=	main.c \
 				heap/heap_pop.c \
 				simulation/run_simulation.c \
 				simulation/coder_routine.c \
+				simulation/simulation_state.c \
+				simulation/simulation_time.c \
+				simulation/monitor.c \
 				utils/utils.c \
+				utils/logging.c \
 
 OBJS		:= $(SRCS:%.c=$(OBJ_DIR)/%.o)
 
