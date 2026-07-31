@@ -7,27 +7,34 @@ CPPFLAGS	:= -Iincludes
 SRC_DIR		:= src
 OBJ_DIR		:= obj
 
-SRCS		:=	main.c \
-				parser/parse_args.c \
-				parser/parse_numbers.c \
-				parser/parse_validation.c \
-				init/init_engine.c \
-				init/init_dongles.c \
-				init/init_coders.c \
-				init/cleanup.c \
-				heap/heap_init.c \
-				heap/heap_priority.c \
-				heap/heap_push.c \
-				heap/heap_pop.c \
-				simulation/run_simulation.c \
-				simulation/coder_routine.c \
-				simulation/coder_state.c \
-				simulation/simulation_state.c \
-				simulation/simulation_time.c \
-				simulation/monitor.c \
-				utils/time.c \
-				utils/logging.c \
-				utils/precise_sleep.c \
+SRCS	:=	main.c \
+			parser/parse_args.c \
+			parser/parse_numbers.c \
+			parser/parse_validation.c \
+			init/init_engine.c \
+			init/init_dongles.c \
+			init/init_coders.c \
+			init/cleanup.c \
+			heap/heap_init.c \
+			heap/heap_priority.c \
+			heap/heap_push.c \
+			heap/heap_pop.c \
+			simulation/run_simulation.c \
+			simulation/coder_routine.c \
+			simulation/coder_actions.c \
+			simulation/coder_state.c \
+			simulation/simulation_state.c \
+			simulation/simulation_time.c \
+			simulation/monitor.c \
+			dongle/dongle_order.c \
+			dongle/dongle_request.c \
+			dongle/dongle_check.c \
+			dongle/dongle_acquire.c \
+			dongle/dongle_release.c \
+			dongle/single_coder.c \
+			utils/time.c \
+			utils/precise_sleep.c \
+			utils/logging.c
 
 OBJS		:= $(SRCS:%.c=$(OBJ_DIR)/%.o)
 

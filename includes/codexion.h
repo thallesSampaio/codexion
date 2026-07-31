@@ -100,6 +100,7 @@ void		print_parser_error(void);
 long long	get_time_ms(void);
 void		log_state(t_coder *coder, const char *state);
 void		log_burnout(t_coder *coder);
+void		precise_sleep(t_engine *engine, long long duration);
 
 /* Initialization */
 int			init_engine(t_engine *engine, t_config config);
@@ -132,5 +133,17 @@ void		coder_start_compile(t_coder *coder);
 void		coder_finish_compile(t_coder *coder);
 long long	coder_get_deadline(t_coder *coder);
 int			coder_get_compiles(t_coder *coder);
+int			run_coder_cycle(t_coder *coder);
+
+/* Dongle */
+void		order_coder_dongles(t_coder *coder, t_dongle **first,
+				t_dongle **second);
+void		lock_coder_dongles(t_coder *coder);
+void		unlock_coder_dongles(t_coder *coder);
+int			request_coder_dongles(t_coder *coder);
+int			coder_can_take_dongles(t_coder *coder);
+int			acquire_coder_dongles(t_coder *coder);
+void		release_coder_dongles(t_coder *coder);
+void		run_single_coder(t_coder *coder);
 
 #endif
