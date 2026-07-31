@@ -25,7 +25,7 @@ SRCS		:=	main.c \
 				simulation/simulation_state.c \
 				simulation/simulation_time.c \
 				simulation/monitor.c \
-				utils/utils.c \
+				utils/time.c \
 				utils/logging.c \
 				utils/precise_sleep.c \
 

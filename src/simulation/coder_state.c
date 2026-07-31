@@ -16,6 +16,12 @@ void	coder_start_compile(t_coder *coder)
 {
 	pthread_mutex_lock(&coder->state_mutex);
 	coder->last_compile_start = get_time_ms();
+	pthread_mutex_unlock(&coder->state_mutex);
+}
+
+void	coder_finish_compile(t_coder *coder)
+{
+	pthread_mutex_lock(&coder->state_mutex);
 	coder->compiles_done++;
 	pthread_mutex_unlock(&coder->state_mutex);
 }
