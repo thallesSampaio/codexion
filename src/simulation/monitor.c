@@ -12,18 +12,7 @@
 
 #include "codexion.h"
 
-static long long	get_coder_deadline(t_coder *coder)
-{
-	long long	deadline;
-
-	pthread_mutex_lock(&coder->state_mutex);
-	deadline = coder->last_compile_start
-		+ coder->engine->config.time_to_burnout;
-	pthread_mutex_unlock(&coder->state_mutex);
-	return (deadline);
-}
-
-static t_coder	*find_burned_out_coder(t_engine *engine)
+static t_coder	*find_burned_out(t_engine *engine)
 {
 	int			i;
 	long long	now;
@@ -32,26 +21,56 @@ static t_coder	*find_burned_out_coder(t_engine *engine)
 	now = get_time_ms();
 	while (i < engine->config.num_coders)
 	{
-		if (now >= get_coder_deadline(&engine->coders[i]))
+		if (now >= coder_get_deadline(&engine->coders[i]))
 			return (&engine->coders[i]);
 		i++;
 	}
 	return (NULL);
 }
 
+static int	all_coders_completed(t_engine *engine)
+{
+	int	i;
+
+	i = 0;
+	while (i < engine->config.num_coders)
+	{
+		if (coder_get_compiles(&engine->coders[i])
+			< engine->config.num_compiles_required)
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+static int	check_simulation_end(t_engine *engine)
+{
+	t_coder	*burned_out;
+
+	burned_out = find_burned_out(engine);
+	if (burned_out)
+	{
+		if (stop_simulation(engine))
+			log_burnout(burned_out);
+		return (1);
+	}
+	if (all_coders_completed(engine))
+	{
+		stop_simulation(engine);
+		return (1);
+	}
+	return (0);
+}
+
 void	*monitor_routine(void *arg)
 {
 	t_engine	*engine;
-	t_coder		*burned_out;
 
 	engine = (t_engine *)arg;
 	while (!simulation_should_stop(engine))
 	{
-		burned_out = find_burned_out_coder(engine);
-		if (burned_out)
+		if (check_simulation_end(engine))
 		{
-			if (stop_simulation(engine))
-				log_burnout(burned_out);
 			wake_all_coders(engine);
 			break ;
 		}
